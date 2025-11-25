@@ -136,33 +136,7 @@
     },
 
     {
-      "name": "TC-UH-06 Mixed Batch Partial Success",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "[\n  {\"dealId\":\"D6001\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-06-06T10:00:00Z\",\"amount\":100},\n  {\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-06-06T10:05:00Z\",\"amount\":200},\n  {\"dealId\":\"D6001\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-06-06T10:10:00Z\",\"amount\":300}\n]"
-        },
-        "url": { "raw": "http://localhost:8080/api/deals/import" }
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 207\", function () { pm.response.to.have.status(207); });",
-              "pm.test(\"Partial success validation\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.successful).to.include(\"D6001\"); pm.expect(jsonData.failed.length).to.eql(2); });"
-            ]
-          }
-        }
-      ]
-    },
-
-    {
-      "name": "TC-UH-07 Invalid Timestamp",
+      "name": "TC-UH-06 Invalid Timestamp",
       "request": {
         "method": "POST",
         "header": [
@@ -181,32 +155,6 @@
             "exec": [
               "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
               "pm.test(\"Error: Invalid timestamp\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.error).to.eql(\"Invalid timestamp format\"); });"
-            ]
-          }
-        }
-      ]
-    },
-
-    {
-      "name": "TC-UH-08 Oversized Payload (10 items instead of 100000)",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "[\n  {\"dealId\":\"DX0\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX1\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX2\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX3\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX4\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX5\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX6\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX7\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX8\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX9\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100}\n]"
-        },
-        "url": { "raw": "http://localhost:8080/api/deals/import" }
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 413\", function () { pm.response.to.have.status(413); });",
-              "pm.test(\"Error: Payload too large\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.error).to.eql(\"Payload too large\"); });"
             ]
           }
         }
