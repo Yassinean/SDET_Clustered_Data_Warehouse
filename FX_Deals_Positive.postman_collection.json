@@ -1,0 +1,145 @@
+{
+  "info": {
+    "name": "FX Deals Positive Tests",
+    "_postman_id": "positive-collection-001",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "TC-HP-01 Single Valid Deal",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dealId\": \"D1001\",\n  \"fromCurrency\": \"USD\",\n  \"toCurrency\": \"EUR\",\n  \"timestamp\": \"2025-01-01T10:00:00Z\",\n  \"amount\": 1500\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+              "pm.test(\"Successful deal D1001\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.successful).to.include(\"D1001\"); });"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "TC-HP-02 Multiple Valid Deals",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\n    \"dealId\": \"D2001\",\n    \"fromCurrency\": \"JPY\",\n    \"toCurrency\": \"USD\",\n    \"timestamp\": \"2025-02-02T12:00:00Z\",\n    \"amount\": 5000.50\n  },\n  {\n    \"dealId\": \"D2002\",\n    \"fromCurrency\": \"GBP\",\n    \"toCurrency\": \"EUR\",\n    \"timestamp\": \"2025-02-02T15:30:00Z\",\n    \"amount\": 2300\n  }\n]"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 207\", function () { pm.response.to.have.status(207); });",
+              "pm.test(\"Successful deals D2001 & D2002\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.successful).to.include.members([\"D2001\",\"D2002\"]); });"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "TC-HP-03 Very Large Amount",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dealId\": \"D3001\",\n  \"fromCurrency\": \"USD\",\n  \"toCurrency\": \"JPY\",\n  \"timestamp\": \"2025-03-03T14:00:00Z\",\n  \"amount\": 999999999.99\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+              "pm.test(\"Successful deal D3001\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.successful).to.include(\"D3001\"); });"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "TC-HP-04 Rare ISO Currency XAU",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dealId\": \"D3002\",\n  \"fromCurrency\": \"XAU\",\n  \"toCurrency\": \"USD\",\n  \"timestamp\": \"2025-03-04T10:00:00Z\",\n  \"amount\": 10\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+              "pm.test(\"Successful deal D3002\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.successful).to.include(\"D3002\"); });"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "TC-HP-05 Maximum Batch Size (10 items)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\"dealId\":\"D5000\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-05-05T10:00:00Z\",\"amount\":1},\n  {\"dealId\":\"D5001\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-05-05T10:00:00Z\",\"amount\":2},\n  {\"dealId\":\"D5002\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-05-05T10:00:00Z\",\"amount\":3},\n  {\"dealId\":\"D5003\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-05-05T10:00:00Z\",\"amount\":4},\n  {\"dealId\":\"D5004\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-05-05T10:00:00Z\",\"amount\":5},\n  {\"dealId\":\"D5005\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-05-05T10:00:00Z\",\"amount\":6},\n  {\"dealId\":\"D5006\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-05-05T10:00:00Z\",\"amount\":7},\n  {\"dealId\":\"D5007\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-05-05T10:00:00Z\",\"amount\":8},\n  {\"dealId\":\"D5008\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-05-05T10:00:00Z\",\"amount\":9},\n  {\"dealId\":\"D5009\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-05-05T10:00:00Z\",\"amount\":10}\n]"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      }
+    },
+
+    {
+      "name": "TC-HP-06 Performance Valid Load (K6)",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "http://localhost:8080/health" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

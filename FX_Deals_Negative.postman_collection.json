@@ -1,0 +1,216 @@
+{
+  "info": {
+    "name": "FX Deals Negative Tests",
+    "_postman_id": "negative-collection-001",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "TC-UH-01 Missing dealId",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fromCurrency\": \"USD\",\n  \"toCurrency\": \"EUR\",\n  \"timestamp\": \"2025-01-01T10:00:00Z\",\n  \"amount\": 1500\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"Error: dealId required\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.error).to.eql(\"dealId is required\"); });"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "TC-UH-02 Invalid Currency Format",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dealId\": \"D1002\",\n  \"fromCurrency\": \"USDD\",\n  \"toCurrency\": \"E\",\n  \"timestamp\": \"2025-01-01T10:00:00Z\",\n  \"amount\": 1200\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"Error: Invalid currency code format\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.error).to.eql(\"Invalid currency code format\"); });"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "TC-UH-03 Amount as String / Wrong Type",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dealId\": \"D1003\",\n  \"fromCurrency\": \"USD\",\n  \"toCurrency\": \"EUR\",\n  \"timestamp\": \"2025-01-01T10:00:00Z\",\n  \"amount\": \"abc\"\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"Error: amount must be numeric\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.error).to.eql(\"amount must be numeric\"); });"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "TC-UH-04 Negative Amount",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dealId\": \"D1004\",\n  \"fromCurrency\": \"USD\",\n  \"toCurrency\": \"EUR\",\n  \"timestamp\": \"2025-01-01T10:00:00Z\",\n  \"amount\": -100\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"Error: Amount must be positive\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.error).to.eql(\"Amount must be positive\"); });"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "TC-UH-05 Duplicate dealId",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dealId\": \"D1001\",\n  \"fromCurrency\": \"USD\",\n  \"toCurrency\": \"EUR\",\n  \"timestamp\": \"2025-01-01T10:00:00Z\",\n  \"amount\": 1500\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });",
+              "pm.test(\"Error: Duplicate dealId\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.error).to.eql(\"Duplicate dealId: D1001\"); });"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "TC-UH-06 Mixed Batch Partial Success",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\"dealId\":\"D6001\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-06-06T10:00:00Z\",\"amount\":100},\n  {\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-06-06T10:05:00Z\",\"amount\":200},\n  {\"dealId\":\"D6001\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-06-06T10:10:00Z\",\"amount\":300}\n]"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 207\", function () { pm.response.to.have.status(207); });",
+              "pm.test(\"Partial success validation\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.successful).to.include(\"D6001\"); pm.expect(jsonData.failed.length).to.eql(2); });"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "TC-UH-07 Invalid Timestamp",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dealId\": \"D1007\",\n  \"fromCurrency\": \"USD\",\n  \"toCurrency\": \"EUR\",\n  \"timestamp\": \"2025-99-99T99:99:99Z\",\n  \"amount\": 1000\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+              "pm.test(\"Error: Invalid timestamp\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.error).to.eql(\"Invalid timestamp format\"); });"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "TC-UH-08 Oversized Payload (10 items instead of 100000)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\"dealId\":\"DX0\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX1\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX2\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX3\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX4\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX5\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX6\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX7\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX8\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100},\n  {\"dealId\":\"DX9\",\"fromCurrency\":\"USD\",\"toCurrency\":\"EUR\",\"timestamp\":\"2025-01-01T10:00:00Z\",\"amount\":100}\n]"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 413\", function () { pm.response.to.have.status(413); });",
+              "pm.test(\"Error: Payload too large\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.error).to.eql(\"Payload too large\"); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
