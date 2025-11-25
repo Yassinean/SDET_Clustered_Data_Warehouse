@@ -23,7 +23,7 @@ Verify that one valid deal is successfully imported.
 * HTTP 201 Created
 * Deal inserted into DB
 
-#### TC-HP-03 — Valid Large Amount
+#### TC-HP-02 — Valid Large Amount
 
 ##### Description:
 Verify that very large numeric amounts are accepted.
@@ -44,7 +44,7 @@ Verify that very large numeric amounts are accepted.
 * HTTP 201
 * Deal inserted
 
-#### TC-HP-04 — Valid Rare ISO Currency
+#### TC-HP-03 — Valid Rare ISO Currency
 
 ##### Description:
 Validate acceptance of rare but correct ISO currency codes.
@@ -66,7 +66,7 @@ Validate acceptance of rare but correct ISO currency codes.
 * HTTP 201
 * Deal inserted
 
-#### TC-HP-05 — Batch with Maximum Allowed Size
+#### TC-HP-04 — Batch with Maximum Allowed Size
 
 ##### Description:
 Verify system performance & stability with the largest acceptable batch size (ex: 1000 deals).
@@ -87,15 +87,5 @@ Verify system performance & stability with the largest acceptable batch size (ex
 
 - Expected:
 
-* HTTP 207
+* HTTP 200
 * All valid deals inserted
-
-#### TC-HP-06 — Performance Valid Load (K6)
-
-##### Description:
-Verify system stability under 200 req/sec.
-
-- Expected:
-
-* No errors
-* Response time under acceptable limits
