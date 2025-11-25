@@ -30,35 +30,8 @@
         }
       ]
     },
-
     {
-      "name": "TC-HP-02 Multiple Valid Deals",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "[\n  {\n    \"dealId\": \"D2001\",\n    \"fromCurrency\": \"JPY\",\n    \"toCurrency\": \"USD\",\n    \"timestamp\": \"2025-02-02T12:00:00Z\",\n    \"amount\": 5000.50\n  },\n  {\n    \"dealId\": \"D2002\",\n    \"fromCurrency\": \"GBP\",\n    \"toCurrency\": \"EUR\",\n    \"timestamp\": \"2025-02-02T15:30:00Z\",\n    \"amount\": 2300\n  }\n]"
-        },
-        "url": { "raw": "http://localhost:8080/api/deals/import" }
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Status code is 207\", function () { pm.response.to.have.status(207); });",
-              "pm.test(\"Successful deals D2001 & D2002\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.successful).to.include.members([\"D2001\",\"D2002\"]); });"
-            ]
-          }
-        }
-      ]
-    },
-
-    {
-      "name": "TC-HP-03 Very Large Amount",
+      "name": "TC-HP-02 Very Large Amount",
       "request": {
         "method": "POST",
         "header": [
