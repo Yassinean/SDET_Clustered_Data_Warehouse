@@ -80,17 +80,7 @@ NEGATIVE_TEST_CASES.md	 |     All invalid, error-producing scenarios     |
   "failed": []
 }
 ```
--> TC-HP-02 — Multiple Valid Deals
-- Expected Response
-
-* HTTP 207 Multi-Status
-```bash
-{
-  "successful": ["D2001", "D2002"],
-  "failed": []
-}
-```
--> TC-HP-03 — Very Large Amount
+-> TC-HP-02 — Very Large Amount
 
 * HTTP 201
 ```bash
@@ -99,7 +89,7 @@ NEGATIVE_TEST_CASES.md	 |     All invalid, error-producing scenarios     |
   "failed": []
 }
 ```
--> TC-HP-04 — Rare ISO Currency (XAU)
+-> TC-HP-03 — Rare ISO Currency (XAU)
 
 - HTTP 201
 ```bash
@@ -107,28 +97,7 @@ NEGATIVE_TEST_CASES.md	 |     All invalid, error-producing scenarios     |
   "successful": ["D3002"],
   "failed": []
 }
-```
--> TC-HP-05 — Maximum Batch Size
-
-- HTTP 207
-```bash
-{
-  "successfulCount": 1000,
-  "failed": []
-}
-```
-
--> TC-HP-06 — Performance Valid Load (K6)
-
-- Expected metrics:
-
-* 95th percentile response time < 200ms
-* 0% request failure
-* Throughput: 200 req/sec
-
-*** (K6 output is not JSON → results will show in console/report.)
-
-##### ❌ Negative Test Scenarios (Unhappy Path)
+```##### ❌ Negative Test Scenarios (Unhappy Path)
 -> TC-UH-01 — Missing dealId
 - Expected Response
 * HTTP 400 Bad Request
@@ -170,39 +139,12 @@ NEGATIVE_TEST_CASES.md	 |     All invalid, error-producing scenarios     |
   "error": "Duplicate dealId: D5001"
 }
 ```
--> TC-UH-06 — Mixed Batch (Partial Success)
-
-- Batch includes:
-
-* 1 valid deal
-* 1 missing dealId
-* 1 duplicate deal
-
-- Expected Response
-* HTTP 207 Multi-Status
-```bash
-{
-  "successful": ["D6001"],
-  "failed": [
-    { "index": 1, "error": "dealId is required" },
-    { "index": 2, "error": "Duplicate dealId: D6001" }
-  ]
-}
-```
--> TC-UH-07 — Invalid Timestamp
+-> TC-UH-06 — Invalid Timestamp
 
 * HTTP 400
 ```bash
 {
   "error": "Invalid timestamp format"
-}
-```
--> TC-UH-08 — Oversized Payload (Stress Test)
-
-* HTTP 400 or 413 Payload Too Large
-```bash
-{
-  "error": "Payload too large"
 }
 ```
 ##### 📊 5. How Tests Are Organized
@@ -261,5 +203,6 @@ This repo is focused on:
 - ✔ API expectations
 - ✔ Coverage rules
 - ✔ Test documentation clarity
+
 
 Not on full backend implementation — purposely aligned with an SDET-oriented assignment.
