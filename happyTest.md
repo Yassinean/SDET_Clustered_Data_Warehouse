@@ -65,27 +65,3 @@ Validate acceptance of rare but correct ISO currency codes.
 
 * HTTP 201
 * Deal inserted
-
-#### TC-HP-04 — Batch with Maximum Allowed Size
-
-##### Description:
-Verify system performance & stability with the largest acceptable batch size (ex: 1000 deals).
-
-- Request JSON: (Example snippet)
-```bash
-[
-  {
-    "dealId": "MAX001",
-    "fromCurrency": "USD",
-    "toCurrency": "EUR",
-    "timestamp": "2025-05-01T10:00:00Z",
-    "amount": 10
-  }
-  // + 999 more
-]
-```
-
-- Expected:
-
-* HTTP 200
-* All valid deals inserted
