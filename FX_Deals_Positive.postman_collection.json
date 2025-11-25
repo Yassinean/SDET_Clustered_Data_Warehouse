@@ -54,6 +54,31 @@
           }
         }
       ]
+    },
+    {
+      "name": "TC-HP-03 Rare ISO Currency XAU",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"dealId\": \"D3002\",\n  \"fromCurrency\": \"XAU\",\n  \"toCurrency\": \"USD\",\n  \"timestamp\": \"2025-03-04T10:00:00Z\",\n  \"amount\": 10\n}"
+        },
+        "url": { "raw": "http://localhost:8080/api/deals/import" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+              "pm.test(\"Successful deal D3002\", function () { var jsonData = pm.response.json(); pm.expect(jsonData.successful).to.include(\"D3002\"); });"
+            ]
+          }
+        }
+      ]
     }
   ]
 }
