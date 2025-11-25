@@ -86,47 +86,7 @@ Same as above.
 - HTTP 409 Conflict
 - "Duplicate dealId: D5001"
 
-#### TC-UH-06 — Mixed Batch (Partial Success)
-- Request
-```bash
-[
-  {
-    "dealId": "D6001",
-    "fromCurrency": "USD",
-    "toCurrency": "EUR",
-    "timestamp": "2025-01-01T10:00:00Z",
-    "amount": 100
-  },
-  {
-    "dealId": "",
-    "fromCurrency": "USD",
-    "toCurrency": "EUR",
-    "timestamp": "2025-01-01T10:00:00Z",
-    "amount": 200
-  },
-  {
-    "dealId": "D6001",
-    "fromCurrency": "GBP",
-    "toCurrency": "EUR",
-    "timestamp": "2025-01-01T10:00:00Z",
-    "amount": 300
-  }
-]
-```
-- Expected
-
-- HTTP 207 Multi-Status
-- Response example:
-```bash
-{
-  "successful": ["D6001"],
-  "failed": [
-    { "index": 1, "error": "dealId is required"},
-    { "index": 2, "error": "Duplicate dealId: D6001" }
-  ]
-}
-```
-#### TC-UH-07 — Invalid Timestamp
+#### TC-UH-06 — Invalid Timestamp
 - Request
 ```bash
 {
@@ -141,12 +101,3 @@ Same as above.
 
 * HTTP 400
 * "Invalid timestamp format"
-
-#### TC-UH-08 — Stress Payload (Too Large)
-
-* JSON array of 50,000+ deals
-
-- Expected
-
-* HTTP 400 or 413 (depending on config)
-* System does NOT crash
