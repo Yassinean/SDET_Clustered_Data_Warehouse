@@ -23,36 +23,6 @@ Verify that one valid deal is successfully imported.
 * HTTP 201 Created
 * Deal inserted into DB
 
-#### TC-HP-02 — Multiple Valid Deals
-
-##### Description:
-Verify that multiple valid deals in a batch are successfully imported.
-
-- Request JSON
-``` bash
-[
-  {
-    "dealId": "D2001",
-    "fromCurrency": "JPY",
-    "toCurrency": "USD",
-    "timestamp": "2025-02-02T12:00:00Z",
-    "amount": 5000.50
-  },
-  {
-    "dealId": "D2002",
-    "fromCurrency": "GBP",
-    "toCurrency": "EUR",
-    "timestamp": "2025-02-02T15:30:00Z",
-    "amount": 2300
-  }
-] 
-```
-
-- Expected:
-
-* HTTP 207 Multi-Status
-* Both deals successfully inserted
-
 #### TC-HP-03 — Valid Large Amount
 
 ##### Description:
